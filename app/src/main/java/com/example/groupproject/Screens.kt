@@ -16,7 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -179,7 +182,9 @@ fun LoginScreen(
 }
 
 @Composable
-fun forgot_password(){
+fun forgot_password(auth: FirebaseAuth, navController: NavController){
+    val emailSent = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
     val emailState = remember { mutableStateOf("") }
     Column (
         modifier = Modifier.fillMaxSize()
@@ -203,7 +208,21 @@ fun forgot_password(){
 
         Spacer(modifier = Modifier.height(50.dp))
 
-        Button(onClick = {},
+        Button(onClick = {
+            if (emailState.value.isNotEmpty()){
+                auth.sendPasswordResetEmail(emailState.value)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful){
+                            emailSent.value = true
+                            errorMessage.value = ""
+                        }else{
+                            errorMessage.value = task.exception?.message ?: "Error sending email"
+                        }
+                    }
+            }else{
+                errorMessage.value = "Please enter your email address"
+            }
+        },
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             shape = RoundedCornerShape(50),
             modifier = Modifier.padding(vertical = 8.dp)
@@ -211,8 +230,17 @@ fun forgot_password(){
         ) {
             Text(text = "Send", color = Color.Black, fontSize = 18.sp)
         }
+
+        if (emailSent.value){
+            Text(text = "Password reset email sent. Check your email",
+                color = Color.White)
+        }
+        if (errorMessage.value.isNotEmpty()){
+            Text(text = errorMessage.value, color = Color.Red)
+        }
     }
 }
+
 
 @Composable
 fun create_account(

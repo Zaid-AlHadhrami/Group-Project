@@ -79,7 +79,7 @@ fun TopNavigationBar2(){
         Icon(
             imageVector = Icons.Default.Menu,
             contentDescription = "Menu",
-            modifier = Modifier.clickable { onMenuClick() }
+            modifier = Modifier.clickable {}
         )
     }
 }
