@@ -76,6 +76,7 @@ sealed class Screen(val route : String, val title: String){
 class MainActivity : ComponentActivity() {
     private lateinit var auth : FirebaseAuth
     private lateinit var googleSignInClient : GoogleSignInClient
+    private lateinit var navController : NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +91,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GroupProjectTheme {
+                navController = rememberNavController()
                 MainApp(auth, googleSignInClient, ::signInWithGoogle)
             }
         }
@@ -109,6 +111,10 @@ class MainActivity : ComponentActivity() {
         auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 Toast.makeText(this, "Signed in with Google", Toast.LENGTH_SHORT).show()
+                navController.navigate(Screen.CorrectLogIn.route){
+                    popUpTo(Screen.Login.route) {inclusive = true}
+                }
+
             } else {
                 Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
             }

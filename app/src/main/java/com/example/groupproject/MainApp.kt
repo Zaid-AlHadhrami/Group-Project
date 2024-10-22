@@ -21,11 +21,10 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun MainApp(auth: FirebaseAuth, googleSignInClient: GoogleSignInClient, signInWithGoogle: () -> Unit) {
     val navController = rememberNavController()
-    val isUserLoggedIn = remember { mutableStateOf(false) } // Estado de autenticación
+    val isUserLoggedIn = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            // Mostrar la TopNavigationBar solo en las pantallas de Login, Register y ForgotPassword
             val currentScreen = navController.currentBackStackEntryAsState().value?.destination?.route
             if (currentScreen in listOf(Screen.Login.route, Screen.CreateAccount.route, Screen.Password.route)) {
                 val title = when (currentScreen) {
@@ -36,17 +35,20 @@ fun MainApp(auth: FirebaseAuth, googleSignInClient: GoogleSignInClient, signInWi
                 }
                 TopNavigationBar(onBackClick = { navController.popBackStack() }, title = title)
             }
+            if (currentScreen in listOf(Screen.CorrectLogIn.route, Screen.Crypto.route, Screen.Assets.route, Screen.Portfolio.route)){
+                TopNavigationBar2()
+            }
         },
         bottomBar = {
             if (isUserLoggedIn.value) {
                 BottomNavigationBar(navController)
             }
         }
-    ) { innerPadding -> // `innerPadding` para manejar el padding del Scaffold
+    ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (isUserLoggedIn.value) Screen.CorrectLogIn.route else Screen.Home.route, // Elige la ruta inicial dependiendo del estado de autenticación
-            modifier = Modifier.padding(innerPadding) // Aplica el padding del Scaffold
+            startDestination = if (isUserLoggedIn.value) Screen.CorrectLogIn.route else Screen.Home.route,
+            modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route){
                 home_screen(onLoginClick = {navController.navigate(Screen.Login.route)},
@@ -73,7 +75,7 @@ fun MainApp(auth: FirebaseAuth, googleSignInClient: GoogleSignInClient, signInWi
             }
             composable(Screen.CorrectLogIn.route) {
                 Correct_Log_In_Screen(navController = navController)
-                isUserLoggedIn.value = true // Actualiza el estado a "iniciado sesión"
+                isUserLoggedIn.value = true
             }
             composable(Screen.Crypto.route) {
                 crypto()

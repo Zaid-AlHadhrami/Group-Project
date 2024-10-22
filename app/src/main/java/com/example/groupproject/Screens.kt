@@ -156,7 +156,7 @@ fun LoginScreen(
                 .padding(5.dp)
         )
 
-        // Botón "Create Account"
+
         Button(
             onClick = onCreateAccountClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
@@ -168,7 +168,7 @@ fun LoginScreen(
             Text(text = "Create Account", color = Color(0xFFFFD700), fontSize = 18.sp)
         }
 
-        // Botón "Forgot your password?"
+
         TextButton(
             onClick = { onForgotPasswordClick() },
             modifier = Modifier.align(Alignment.CenterHorizontally)
